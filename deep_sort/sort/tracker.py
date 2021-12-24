@@ -44,6 +44,7 @@ class Tracker:
 
         self.kf = kalman_filter.KalmanFilter()
         self.tracks = []
+        self.deleted_tracks = []
         self._next_id = 1
 
     def predict(self):
@@ -80,7 +81,16 @@ class Tracker:
             self.tracks[track_idx].mark_missed()
         for detection_idx in unmatched_detections:
             self._initiate_track(detections[detection_idx], classes[detection_idx].item())
-        self.tracks = [t for t in self.tracks if not t.is_deleted()]
+
+        tracks = []
+        deleted_tracks = []
+        for t in self.tracks:
+            if t.is_deleted():
+                deleted_tracks.append(t)
+            else:
+                tracks.append(t)
+        self.tracks = tracks
+        self.deleted_tracks = deleted_tracks
 
         # Update distance metric.
         active_targets = [t.track_id for t in self.tracks if t.is_confirmed()]

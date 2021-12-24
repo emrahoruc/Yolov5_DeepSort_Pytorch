@@ -11,10 +11,15 @@ __all__ = ['DeepSort']
 
 
 class DeepSort(object):
+
+    extractor = None
+
     def __init__(self, model_type, max_dist=0.2, min_confidence=0.3, max_iou_distance=0.7, max_age=70, n_init=3, nn_budget=100, use_cuda=True):
         self.min_confidence = min_confidence
 
-        self.extractor = Extractor(model_type, use_cuda=use_cuda)
+        # model bir defa yükleniyor
+        if DeepSort.extractor is None:
+            DeepSort.extractor = Extractor(model_type, use_cuda=use_cuda)
 
         max_cosine_distance = max_dist
         metric = NearestNeighborDistanceMetric(
@@ -111,7 +116,7 @@ class DeepSort(object):
             im = ori_img[y1:y2, x1:x2]
             im_crops.append(im)
         if im_crops:
-            features = self.extractor(im_crops)
+            features = DeepSort.extractor(im_crops)
         else:
             features = np.array([])
         return features
