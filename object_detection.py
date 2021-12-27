@@ -69,7 +69,7 @@ class ObjectDetection:
 
         # Initialize
         device = select_device(device)
-        half &= device != 'cpu'  # half precision only supported on CUDA
+        half &= device.type != 'cpu'  # half precision only supported on CUDA
 
         # Load model
         device = select_device(device)
