@@ -59,7 +59,7 @@ class ObjectDetection:
         
 
     @staticmethod
-    def loadModel(modelName: str, imageSize: int = 640, device: str = "cpu", half: bool = False, dnn: bool = False):
+    def loadModel(modelName: str, imageSize: List[int] = [640, 640], device: str = "cpu", half: bool = False, dnn: bool = False):
         
         if modelName not in ObjectDetection.__modelPaths:
             raise Exception(f"Invalid model: {modelName}")
@@ -80,15 +80,15 @@ class ObjectDetection:
         # Half
         half &= pt and device.type != 'cpu'  # half precision only supported by PyTorch on CUDA
         if pt:
-            model.half() if half else model.float()
+            model.model.half() if half else model.model.float()
 
         # Run inference
         if pt and device.type != 'cpu':
-            model(torch.zeros(1, 3, *imageSize).to(device).type_as(next(model.parameters())))  # warmup
+            model(torch.zeros(1, 3, *imageSize).to(device).type_as(next(model.model.parameters())))  # warmup
 
         modelObj = ObjectDetectionModel()
         modelObj.model = model
-        modelObj.names = names
+        modelObj.names = model.module.names if hasattr(model, 'module') else model.names
         modelObj.stride = stride
         modelObj.imageSize = imageSize
         modelObj.device = device

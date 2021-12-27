@@ -1,5 +1,5 @@
 DEEPSORT:
-  MODEL_TYPE: "osnet_x1_0"
+  MODEL_TYPE: "osnet_x0_25"
   MAX_DIST: 0.2 # The matching threshold. Samples with larger distance are considered an invalid match
   MIN_CONFIDENCE: 0.5 # Minimum class confidence to consider
   MAX_IOU_DISTANCE: 0.7 # Gating threshold. Associations with cost larger than this value are disregarded.
